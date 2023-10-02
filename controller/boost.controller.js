@@ -7,8 +7,8 @@ const fs = require('fs'); // Import the fs module
 const boostController = {
     showBoost : async (req, res) => {
         try{
-            let query = 'SELECT id, winrate, rank, star_price, booster_email, promote_pic FROM boosterdetail'
-            query += ` WHERE status = 'ready'`
+            let query = 'SELECT boosterID, winrate, tier, star_price, booster_email, promote_pic FROM boosterdetail'
+            query += ` WHERE status BETWEEN 0 AND 2`
             if(req.query.winrateGreaterThan){
                 const winrateGreaterThan = parseInt(req.query.winrateGreaterThan);
                 //isNaN check if not number ex. 12 = false, hello = true
@@ -43,10 +43,10 @@ const boostController = {
                 query += ` AND (`;
                 for(let i in rank){
                     if(i == 0){
-                        query += `rank='${rank[i]}'`;
+                        query += `tier='${rank[i]}'`;
                     }
                     else{
-                        query += ` OR rank='${rank[i]}'`;
+                        query += ` OR tier='${rank[i]}'`;
                     }
                 }
                 query += `)`;

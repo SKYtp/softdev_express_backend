@@ -7,7 +7,7 @@ const fs = require('fs'); // Import the fs module
 const orderController = {
     showOrder: async (req, res) => {
         try {
-            let query = 'SELECT id, image, order_name, price FROM sellorder'
+            let query = 'SELECT orderID, image, order_name, price FROM sellorder'
             query += ` WHERE status = 'sell'`
             if(req.query.search){
                 query += ` AND order_name LIKE '%${req.query.search}%'`
@@ -45,10 +45,10 @@ const orderController = {
                 query += ` AND (`;
                 for(let i in rank){
                     if(i == 0){
-                        query += `rank='${rank[i]}'`;
+                        query += `tier='${rank[i]}'`;
                     }
                     else{
-                        query += ` OR rank='${rank[i]}'`;
+                        query += ` OR tier='${rank[i]}'`;
                     }
                 }
                 query += `)`;
@@ -70,7 +70,6 @@ const orderController = {
         
             if (req.query.orderBy) {
                 const orderBy = req.query.orderBy;
-                //query += ` ORDER BY ${orderBy}`;
                 if(req.query.orderBy == "ASC"){
                     query += ` ORDER BY price ASC`;
                 }
@@ -99,7 +98,7 @@ const orderController = {
     getOrderByID : async (req, res) => {
         try{
             let query = 'SELECT * FROM sellorder'
-            query += ` WHERE id=${req.params['id']}`
+            query += ` WHERE orderID=${req.params['id']}`
             const [rows, fields] = await pool.query(query)
             const ordersWithImages = rows.map((order) => {
                 const imagePath = order.image
