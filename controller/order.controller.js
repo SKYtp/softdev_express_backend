@@ -100,6 +100,9 @@ const orderController = {
             let query = 'SELECT * FROM sellorder'
             query += ` WHERE orderID=${req.params['id']}`
             const [rows, fields] = await pool.query(query)
+            let query_user = 'SELECT user_name, con_num, first_name, last_name, review_score From users'
+            query_user += ` WHERE uid=${rows[0].sid}`
+            const [user_row] = await pool.query(query_user)
             const ordersWithImages = rows.map((order) => {
                 const imagePath = order.image
                 const imageData = fs.readFileSync(imagePath, 'base64');
@@ -108,7 +111,7 @@ const orderController = {
                     image: `data:image/jpeg;base64,${imageData}`, // Adjust the content type based on your image type
                 }
             })
-            res.json({ status: 'ok', orders: ordersWithImages })
+            res.json({ status: 'ok', user: user_row[0],orders: ordersWithImages[0] })
 
 
         } catch (error) {

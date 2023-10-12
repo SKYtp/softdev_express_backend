@@ -39,9 +39,9 @@ const authController = {
             const { password: hash, uid, user_name } = user[0]
 
             const check = await bcrypt.compare(password, hash)
-
+            
             if (check) {
-                const accessToken = jwt.sign({ user_email: user_email,uid: uid }, secret, { expiresIn: '1h' });
+                const accessToken = jwt.sign({ user_email: user_email,uid: uid }, secret, { expiresIn: '10y' });
                 return res.json({ 
                     accessToken,
                     data: { 
@@ -64,7 +64,7 @@ const authController = {
     },
     tokenCheck: async (req, res) =>{
         try{
-            const {token} = req.headers;
+            const token = req.headers.authorization;
             jwt.verify(token, secret, (err, decode) => {
                 if(err){
                     return res.json({error: err.message})

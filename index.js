@@ -10,6 +10,7 @@ const authRouter = require('./routes/auth.router')
 const orderRouter = require('./routes/order.router')
 const boostRouter = require('./routes/boost.router')
 
+
 app.use("/auth", authRouter)
 app.use("/order", orderRouter)
 app.use("/boost", boostRouter)

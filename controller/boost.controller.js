@@ -7,7 +7,7 @@ const fs = require('fs'); // Import the fs module
 const boostController = {
     showBoost : async (req, res) => {
         try{
-            let query = 'SELECT boosterID, winrate, tier, star_price, booster_email, promote_pic FROM boosterdetail'
+            let query = 'SELECT boosterID, winrate, tier, max_tier, star_price, booster_email, promote_pic FROM boosterdetail'
             query += ` WHERE status BETWEEN 0 AND 2`
             if(req.query.winrateGreaterThan){
                 const winrateGreaterThan = parseInt(req.query.winrateGreaterThan);
@@ -80,9 +80,14 @@ const boostController = {
     },
     getBoostByID : async (req, res) => {
         try{
-            let query = 'SELECT booster_email, rank, star_price, max_rank, winrate, promote_pic, Boosting_number FROM boosterdetail'
-            query += ` WHERE id=${req.params['id']}`
+            let query = 'SELECT uid, booster_email, tier, star_price, max_tier, winrate, promote_pic, Boosting_number FROM boosterdetail'
+            query += ` WHERE boosterID=${req.params['id']}`
             const [rows, fields] = await pool.query(query)
+
+            let query_user = 'SELECT user_name, con_num, first_name, last_name, review_score From users'
+            query_user += ` WHERE uid=${rows[0].uid}`
+            const [user_row] = await pool.query(query_user)
+
             const boostWithImages = rows.map((boost) => {
                 const imagePath = boost.promote_pic
                 const imageData = fs.readFileSync(imagePath, 'base64')
@@ -91,7 +96,7 @@ const boostController = {
                     promote_pic: `data:image/jpeg;base64,${imageData}`, // Adjust the content type based on your image type
                 }
             })
-            res.json({status: 'ok', boosts: boostWithImages})
+            res.json({status: 'ok', user: user_row[0], boosts: boostWithImages[0]})
             
         } catch (error) {
             console.log(error)
